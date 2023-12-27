@@ -1,8 +1,4 @@
----
-
-Pragmatic SQL: tips to improve your practice and wellbeing
-
----
+# Pragmatic SQL: tips to improve your practice and wellbeing
 
 Whether you are data analyst, data engineer, data scientist or just a data enthusiast, you might find here tips to make your work with SQL more efficient and focus on what matters instead of drowning in unmaintainable code.
 
@@ -10,7 +6,7 @@ Code sections with header “EXECUTABLE” contain sample data and can be copied
 
 DISCLAIMER: The examples presented were prepared using Postgres 9.4 but the majority of concepts are transferable to other databases. Just be aware that slightly different SQL syntax might be required.
 
-# Code formatting and structure
+## Code formatting and structure
 Always try to write code good enough to go directly to production. Even when you are doing just some one-off analysis. It is quite likely that you will need to revisit the code in some time, share it, fix it or hand it over to somebody else.
 
 Use indentations and code sectioning via CTEs to make your code easy to read and navigate (if you are not familiar with CTEs, read further).
@@ -40,7 +36,7 @@ If your code is clean and clear, reasonably commented and its logic easy to unde
 
 Practice makes perfect, try to get used to it. Even an odd structure is usually better than none in the long run. And in the end, structure is what SQL stands for.
 
-# 1=1
+## 1=1
 Does your query contain several WHERE conditions? Do you need to evaluate these conditions individually?
 
 ```
@@ -70,7 +66,7 @@ Adding “1=1” as the first condition of a WHERE clause evaluates as TRUE and 
 
 If you are hesitant to keep that in your code, use it only when you need to play around with the WHERE conditions.
 
-# Leading commas
+## Leading commas
 Using leading commas might help during data exploration when you comment out column references to focus only on a particular set of columns. Writing your query with leading commas will prevent the syntax error you get when there is a comma left before FROM statement.
 
 ```
@@ -93,7 +89,7 @@ SELECT
 FROM table_a
 ```
 
-# Checking DISTINCT values
+## Checking DISTINCT values
 If you need to check unique values in a column, this is the typical approach:
 ```
 -- MOCKUP ------------------------
@@ -109,7 +105,7 @@ GROUP BY column_a
 ```
 The proposed query is a bit longer but the insight it provides might save you some time trying to fix cases that appear 2–3 times in a bazillion of rows and could eventually be ignored.
 
-# CTEs
+## CTEs
 CTEs (common table expressions) are named temporary result sets you can refer to in your code in the same way as regular tables or views. They substantially improve the readability of your code and might even help the query performance.
 ```
 -- MOCKUP ------------------------
@@ -153,7 +149,7 @@ LEFT JOIN sales AS sls
 ```
 Use CTEs to isolate processing steps, logically section your code, remap values, generate sample data, and/or preprocess data before joining. If possible, try to organize your CTEs to follow some logical flow of information so that you don’t need to jump up and down between code sections as you would need to do with subqueries. Also, name your CTEs meaningfully to help you navigate your code seamlessly.
 
-# Sample data
+## Sample data
 Do you need to test a new approach or practice some new concept? Do you have some particular values you want to test in mind but don’t know where/how to find these examples in your data? Let’s build up on the CTE concept.
 ```
 -- EXECUTABLE --------------------
@@ -171,7 +167,7 @@ SELECT
   ,value
 FROM sample
 ```
-# Do some tests
+## Do some tests
 Are you writing a custom function, e.g. to process a text column that performs some cleaning or data transformation? Do you need to do some tests on edge cases to be sure it works correctly? Extend the sample data CTE concept.
 ```
 -- MOCKUP ------------------------
@@ -192,7 +188,7 @@ FROM test_cases
 ```
 This can get particularly handy if you are working with REGULAR EXPRESSIONS.
 
-# NULLs and empty strings
+## NULLs and empty strings
 NULL represents a missing value. It is not a value itself. NULL is also somehow contagious, wherever it enters, it usually results in NULL. In addition, NULL is neither equal nor unequal to NULL. This might sound unintuitive and its implications could cause syntax error (good scenario) or data quality issues (bad scenario).
 
 Be cautious also when ordering by columns that contain NULL. As NULLs might be considered larger in value than any proper non-NULL values, it can give you some unexpected results. Check your database documentation or do a test. In Postgres, the NULL ordering behavior can be adjusted with the following:
@@ -236,7 +232,7 @@ SELECT *
     ,(inconsistent_column not in ('a','b','C'))         AS filter_not_in
 FROM test_cases
 ```
-# Arrays
+## Arrays
 To keep it light, arrays can be thought of as lists of values of the same data type. You can use them to simplify logical conditions and make your code more readable and easier to maintain.
 ```
 -- EXECUTABLE --------------------
@@ -337,7 +333,7 @@ SELECT
   ,UNNEST(tags_2) AS tags_2
 FROM id_tags
 ```
-# Value remapping
+## Value remapping
 How many times have you seen something like this repeated several times within a single script?
 ```
 -- MOCKUP ------------------------
@@ -387,7 +383,7 @@ LEFT JOIN mapping AS m
 ```
 In case you would need to do this in several scripts, consider creating a proper table to store the mapping so that it can be referenced wherever needed by your team or organization.
 
-# Start small
+## Start small
 When working on new scripts or fixing the broken ones, you usually don’t want to spend too much time waiting for the results. You already know you will need to run the code several times to capture any remaining bugs.
 
 If you are using CTEs, you can subset your code quite easily, reduce the time to get the results and reiterate with incremental improvements.
@@ -413,7 +409,7 @@ FROM stores AS s
 LEFT JOIN tb_orders AS o
   ON s.store_id = c.id
 ```
-# Complex conditions
+## Complex conditions
 Do you know this one? Familiar?
 ```
 -- MOCKUP ------------------------
@@ -455,7 +451,7 @@ WHERE 1=1
 ```
 If the filtering conditions are very complex and you need to handle a lot of exceptions, consider using CTE as in the value remapping example. Define your conditions in a tabular form via CTE and then use a JOIN to apply the filtering logic. Get creative, might be worth the time!
 
-# Pivoting data to wide format
+## Pivoting data to wide format
 Data comes in various shapes and sizes but almost never in that one you need right now. Pivoting in Postgres needs a bit of creativity.
 ```
 -- EXECUTABLE --------------------
@@ -504,7 +500,7 @@ GROUP BY
 ```
 If you are using MS-SQL, there is a specific PIVOT statement available for you.
 
-# Unpivoting data to long format
+## Unpivoting data to long format
 As mentioned before, data comes in various shapes and sizes…
 ```
 -- EXECUTABLE --------------------
@@ -534,7 +530,7 @@ Note that both arrays are of the same length and therefore will return index-wis
 
 If you are using MS-SQL, there is a specific UNPIVOT statement to do this.
 
-# Analyzing duplicates
+## Analyzing duplicates
 Duplicate values might appear due to data quality issues. Quite often though, we might only not understand enough the context of the data and overlook some valuable or even critical information, such as active/inactive record flags or that the “duplicate” values might represent different time periods. Checking for duplicates is an important practice for understanding our data and its quality.
 
 There are various ways to check for duplicates but they typically fall short right after we find out that “yes, there are duplicates”. While it is nice to know there are duplicates, even nicer would be to know what is causing it.
@@ -566,7 +562,7 @@ SELECT * FROM total;
 ```
 The query above might seem unnecessarily complicated at first but let me explain. The reason is to keep the query generic, reusable and pragmatic. You only need to modify the CTE “duplicate_counts” with your table and keys to get information about the total count of rows and the count of duplicates with respect to those keys. Right after that, if duplicates are found, you can quickly extract a sample of duplicate records. Finding the reason for duplication is then quite easy.
 
-# Database information schema
+## Database information schema
 Documentation and data dictionaries are always missing when they are needed the most. In such cases, the information_schema of our database can come handy. It might not tell you exactly what a particular data point represents, but you might be able to understand some obscured information and if you love challenges, even do some reverse engineering.
 
 Do you want to get some useful information about columns in a table/view?
@@ -639,14 +635,14 @@ WHERE 1=1
 ```
 Be aware though that some information might be restricted to you without proper access grants.
 
-# Naming conventions
+## Naming conventions
 Now that you are aware you can use the information_schema to your advantage, I guess you might understand a bit better why some people might request to follow some particular naming conventions when creating database objects like tables, views or functions.
 
 Using naming conventions can help you identify database objects that belong to a particular context, project or workstream. Also, if naming conventions are used and you or your team follows some standards, you gain the ability to automate a lot of dull tasks with python or some other programming language. Or even with Excel if you get creative.
 
 Again, no need to overkill it with rules. Just try to be consistent.
 
-# Timestamps
+## Timestamps
 Are you creating a table or preparing some analysis? Keep track of timestamps. Timestamps store information on when a certain event occurred, such as the time when you generated an analysis or when some data points were ingested or modified.
 
 Maybe you have already been in a situation where your stakeholder complained about the quality of data you provided. And after a couple of days frantically trying to figure out where the problem is, it became clear that they were comparing a report from last week with data from a month ago. If you would have timestamps in both datasets, the issue would be resolved in minutes. Without it, you can lose the argument even if your data were correct.
@@ -679,7 +675,7 @@ CREATE TABLE tb_{TAG}_{OBJECT_NAME}(
     ,insert_timestamp TIMESTAMPTZ DEFAULT current_timestamp
 )
 ```
-# Script templates and code snippets
+## Script templates and code snippets
 As you might already understand, keeping a collection of useful code snippets can be a good idea. I strongly recommend doing so and generalizing the code continuously. I do enjoy that exercise and it saved me a ton of time coding and debugging, helped me to provide useful information and insights quickly and build solutions in almost no time.
 
 Collect your snippets, keep them handy, generalize them and create script templates for table/view definitions, functions and procedures. Your team, colleagues and collaborators will benefit from it as well.
